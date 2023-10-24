@@ -1,0 +1,9 @@
+<?php
+return[
+    'DB_CONNECTION'=>'mysql',
+    'DB_HOST'=>'db',
+    'DB_PORT'=>'3306',
+    'DB_DATABASE'=>'ProfiDB',
+    'DB_USERNAME'=>'root',
+    'DB_PASSWORD'=>'root',
+];

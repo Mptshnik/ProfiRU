@@ -2,20 +2,25 @@
 
 namespace App\Kernel\Router;
 
+use App\Kernel\Http\Request;
+
 class Router
 {
+    private Request $request;
     private array $routes = [
         'GET' => [],
         'POST' => [],
     ];
 
-    public function __construct()
+    public function __construct(Request $request)
     {
+        $this->request = $request;
         $this->initRoutes();
     }
 
     public function handle(string $uri, string $method): void
     {
+        //header('Content-Type: application/json; charset=utf-8');
         $route = $this->findRoute($uri, $method);
 
         if (! $route) {
@@ -27,6 +32,7 @@ class Router
 
             $controller = new $controller();
 
+            call_user_func([$controller, 'setRequest'], $this->request);
             call_user_func([$controller, $action]);
         } else {
             call_user_func($route->getAction());
@@ -35,7 +41,8 @@ class Router
 
     private function notFound(): void
     {
-        echo '404';
+        http_response_code(404);
+        echo json_encode('404 | Not found');
         exit;
     }
 

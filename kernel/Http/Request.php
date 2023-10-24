@@ -14,18 +14,13 @@ class Request
 
     public readonly array $cookie;
 
-    public function __construct(array $get, array $post, array $server, array $files, array $cookie)
+    public function __construct()
     {
-        $this->get = $get;
-        $this->post = $post;
-        $this->server = $server;
-        $this->files = $files;
-        $this->cookie = $cookie;
-    }
-
-    public static function createInstance(): static
-    {
-        return new static($_GET, $_POST, $_SERVER, $_FILES, $_COOKIE);
+        $this->get = $_GET;
+        $this->post = $_POST;
+        $this->server = $_SERVER;
+        $this->files = $_FILES;
+        $this->cookie = $_COOKIE;
     }
 
     public function uri(): string
@@ -36,5 +31,10 @@ class Request
     public function method(): string
     {
         return $this->server['REQUEST_METHOD'];
+    }
+
+    public function input(string $key, $default = null):mixed
+    {
+        return $this->post[$key] ?? $this->get[$key] ?? $default;
     }
 }

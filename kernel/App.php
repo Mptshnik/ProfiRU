@@ -2,16 +2,23 @@
 
 namespace App\Kernel;
 
+use App\Kernel\Container\Container;
 use App\Kernel\Http\Request;
 use App\Kernel\Router\Router;
 
 class App
 {
+    private Container $container;
+    public function __construct()
+    {
+        $this->container = new Container();
+    }
+
     public function run(): void
     {
-        $router = new Router();
-        $request = Request::createInstance();
-
-        $router->handle($request->uri(), $request->method());
+        $this->container->router->handle(
+            $this->container->request->uri(),
+            $this->container->request->method()
+        );
     }
 }

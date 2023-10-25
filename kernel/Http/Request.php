@@ -23,6 +23,12 @@ class Request
         $this->cookie = $_COOKIE;
     }
 
+    public function uriParam(): string
+    {
+        $parts = explode('/', $this->uri());
+        return end($parts);
+    }
+
     public function uri(): string
     {
         return strtok($this->server['REQUEST_URI'], '?');

@@ -16,6 +16,7 @@ class App
 
     public function run(): void
     {
+
         $this->container->router->handle(
             $this->container->request->uri(),
             $this->container->request->method()

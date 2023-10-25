@@ -21,6 +21,7 @@ class Container
     {
         $this->request = new Request();
         $this->database = new Database();
-        $this->router = new Router($this->request);
+
+        $this->router = new Router($this->request, $this->database);
     }
 }

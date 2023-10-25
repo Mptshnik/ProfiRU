@@ -5,7 +5,6 @@ namespace App\Kernel\Router;
 class Route
 {
     private string $uri;
-
     private string $method;
 
     private $action;
@@ -16,6 +15,7 @@ class Route
         $this->method = $method;
         $this->action = $action;
     }
+
 
     public static function get(string $uri, $action)
     {

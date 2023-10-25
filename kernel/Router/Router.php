@@ -2,25 +2,30 @@
 
 namespace App\Kernel\Router;
 
+use App\Kernel\Database\Database;
 use App\Kernel\Http\Request;
 
 class Router
 {
     private Request $request;
+    private Database $database;
+    /**
+     * @var Route[]
+     */
     private array $routes = [
         'GET' => [],
         'POST' => [],
     ];
 
-    public function __construct(Request $request)
+    public function __construct(Request $request, Database $database)
     {
         $this->request = $request;
+        $this->database = $database;
         $this->initRoutes();
     }
 
     public function handle(string $uri, string $method): void
     {
-        //header('Content-Type: application/json; charset=utf-8');
         $route = $this->findRoute($uri, $method);
 
         if (! $route) {
@@ -33,6 +38,7 @@ class Router
             $controller = new $controller();
 
             call_user_func([$controller, 'setRequest'], $this->request);
+            call_user_func([$controller, 'setDatabase'], $this->database);
             call_user_func([$controller, $action]);
         } else {
             call_user_func($route->getAction());
@@ -48,11 +54,16 @@ class Router
 
     private function findRoute(string $uri, string $method): Route|false
     {
-        if (! isset($this->routes[$method][$uri])) {
-            return false;
+        foreach ($this->routes[$method] as $route){
+            $pattern = '/\/{[^\/]+}$/';
+            $result = preg_replace($pattern, '', $route->getUri());
+
+            if(str_contains($uri, $result)){
+                return $this->routes[$method][$route->getUri()];
+            }
         }
 
-        return $this->routes[$method][$uri];
+        return false;
     }
 
     /**
@@ -60,7 +71,7 @@ class Router
      */
     private function getRoutes(): array
     {
-        return require APP_PATH.'/routes/api.php';
+        return array_merge(require APP_PATH.'/routes/api.php', require APP_PATH.'/routes/web.php');
     }
 
     private function initRoutes(): void

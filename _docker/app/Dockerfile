@@ -1,5 +1,8 @@
 FROM php:8.2-fpm
 
+WORKDIR /var/www
+
+
 RUN apt-get update && apt-get install -y \
       apt-utils \
       libpq-dev \
@@ -16,12 +19,10 @@ RUN apt-get update && apt-get install -y \
 
 COPY ./_docker/app/php.ini /usr/local/etc/php/conf.d/php.ini
 
+
 # Install composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN curl -sS https://getcomposer.org/installer | php -- \
     --filename=composer \
     --install-dir=/usr/local/bin
 
-RUN composer update && composer install && composer dump-autoload
-
-WORKDIR /var/www
